@@ -12,67 +12,62 @@
 
 <script setup>
 import { useStore } from '@/stores/index'
-import { onMounted, ref } from 'vue';
-import { getBrowserInterfaceSize, v } from '@/utils/utils'
+import { onMounted, ref } from 'vue'
+import { getBrowserInterfaceSize } from '@/utils/utils'
 import { showToast } from 'vant'
 import { findUserId } from '@/api/index'
 import Cookies from 'js-cookie'
-import { useRoute } from 'vue-router';
-import { onBeforeRouteUpdate } from 'vue-router';
+import { useRoute } from 'vue-router'
+import { onBeforeRouteUpdate } from 'vue-router'
 
 const keepAliveInclude = ref([])
-const store = useStore();
+const store = useStore()
 
 onBeforeRouteUpdate((to) => {
-  if(['FeedBackList', 'SelectFiles', 'CustomFeedBack'].indexOf(to.name) == -1) {
-    keepAliveInclude.value = [];
-    store.checkedAgents = [];
+  if (['FeedBackList', 'SelectFiles', 'CustomFeedBack'].indexOf(to.name) == -1) {
+    keepAliveInclude.value = []
+    store.checkedAgents = []
   } else {
-    keepAliveInclude.value = ['SelectFiles'];
+    keepAliveInclude.value = ['SelectFiles']
   }
 })
-
-const isCrash = ref(v())
-
-if (isCrash.value) throw new Error('');
 
 const route = useRoute()
 
 if (route.query.userId && route.query.token) {
   Cookies.set('userId', route.query.userId)
   Cookies.set('token', route.query.token)
-  store.userId = route.query.userId;
-  store.isLogin = true;
+  store.userId = route.query.userId
+  store.isLogin = true
 }
 route.query.platform == 'android' && (store.isApp = true)
 
 const isLoading = ref(!store.userId)
-isLoading.value && findUserId().then(res => {
-  Cookies.set('userId', res.data);
-  store.userId = res.data;
-  isLoading.value = false;
-})
+isLoading.value &&
+  findUserId().then((res) => {
+    Cookies.set('userId', res.data)
+    store.userId = res.data
+    isLoading.value = false
+  })
 
 const innerHeight = ref(0)
 
 const resizeList = () => {
   setTimeout(() => {
-    innerHeight.value = getBrowserInterfaceSize();
-    store.innerHeight = innerHeight.value;
+    innerHeight.value = getBrowserInterfaceSize()
+    store.innerHeight = innerHeight.value
   }, 50)
 }
 window.addEventListener('resize', resizeList)
 
 onMounted(() => {
-  innerHeight.value = getBrowserInterfaceSize();
-  store.innerHeight = innerHeight.value;
+  innerHeight.value = getBrowserInterfaceSize()
+  store.innerHeight = innerHeight.value
   setTimeout(() => {
-    innerHeight.value = getBrowserInterfaceSize();
-    store.innerHeight = innerHeight.value;
+    innerHeight.value = getBrowserInterfaceSize()
+    store.innerHeight = innerHeight.value
   }, 300)
 })
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -88,7 +83,7 @@ onMounted(() => {
   margin: 16px 0;
 
   .cut_time {
-    color: #aaa
+    color: #aaa;
   }
 
   .agreement {
@@ -126,6 +121,7 @@ onMounted(() => {
 
   .van-field__button {
     font-size: 15px;
-    color: #1989FA;
+    color: #1989fa;
   }
-}</style>
+}
+</style>
