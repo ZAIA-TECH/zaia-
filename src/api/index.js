@@ -221,6 +221,7 @@ export async function exportWordReport (data){
   const url = api.exportWordReport;
   return await service.post(url,data) //应该不要“导出中”吧...
 }
+
 export async function touchMessage (params) {
   const url = api.touchMessage;
   return await service.get(url, { params, loadingMsg: '润色中...' })

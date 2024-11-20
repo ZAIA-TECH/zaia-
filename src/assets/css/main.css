@@ -1,0 +1,27 @@
+@import './base.css';
+
+.right_arrow {
+  width: 16px;
+  height: 16px;
+}
+
+/* fade-transform */
+.fade-leave-active,
+.fade-enter-active {
+  transition: all .2s;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.van-popup--bottom.van-popup--round {
+  width: 375px;
+  left: calc(50% - 187.5px);
+}

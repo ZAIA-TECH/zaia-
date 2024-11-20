@@ -1,10 +1,17 @@
+<<<<<<< HEAD
 d<template>
+=======
+<template>
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   <div class="correction_report">
     <div class="top_btns">
       <span></span>
       <div class="right_btns">
         <div class="view_origin" @click="originView"></div>
+<<<<<<< HEAD
         <div class = "export_report" id="export_report" @click="exportReport">导出WORD</div> <!--11.17新增-->
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
         <div class="refresh" id="refresh" @click="copyReport">复制报告</div>
       </div>
     </div>
@@ -75,6 +82,7 @@ d<template>
       <yaChart ref="yachart" v-show="activeNav == 2" v-if="chartRender" :orderDetailInfo="orderDetailInfo" :dicDetailDesc="dicDetailDesc" :activeNav="activeNav"></yaChart>
     </div>
 
+<<<<<<< HEAD
 <!-- 导出word的弹窗 -->
     <van-dialog
         class="success-export"
@@ -93,6 +101,8 @@ d<template>
       </div>
     </van-dialog>
 
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
     <van-dialog v-model:show="showEditTitle" title="编辑报告标题" show-cancel-button @confirm="confirmTitle" @cancel="cancelTitle">
       <van-field v-model="newTitle" label="" placeholder="请输入报告标题" maxlength="20" />
     </van-dialog>
@@ -107,6 +117,10 @@ d<template>
         <div class="comfirm_btn" @click="comfirmFeed">提交</div>
       </div>
     </van-popup>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
     <van-dialog v-model:show="isLoading" @confirm="confirmNext" :confirm-button-text="'先改下一篇'">
       <div class="load_txt">
         <van-loading :size="fitUnitPx(50)" color="#1989fa" :vertical="true" text-color="#666">
@@ -130,12 +144,21 @@ d<template>
 </template>
 
 <script setup>
+<<<<<<< HEAD
 import {ref, onMounted, computed} from 'vue';
   import { updateTitle, orderDetail, updateReporting, reportingOverride, touchMessage, glmToken ,exportWordReport} from '@/api';
   import { scoreOrderComment } from '@/api/aiApi'
   import { v1Chat } from '@/chatBaseApi'
   import { useRoute, useRouter } from 'vue-router';
   import { copy,  fitUnitPx } from '@/utils/utils'
+=======
+  import { ref, onMounted } from 'vue';
+  import { updateTitle, orderDetail, updateReporting, reportingOverride, touchMessage, glmToken } from '@/api';
+  import { scoreOrderComment } from '@/api/aiApi'
+  import { v1Chat } from '@/chatBaseApi'
+  import { useRoute, useRouter } from 'vue-router';
+  import { copy, fitUnitPx } from '@/utils/utils'
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   import dictionary from '@/utils/dictionary'
   import { parse } from 'marked'
   import backIndex from '@/components/backIndex.vue';
@@ -213,7 +236,10 @@ import {ref, onMounted, computed} from 'vue';
     if(activeNav.value == 1) {
       touchMessageOrigin.value = newFeedBack.value;
       touchMessageTxt.value = parse(newFeedBack.value);
+<<<<<<< HEAD
       // 在设置 touchMessageTxt 时，处理换行符
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
     } else {
       answerList.value[currItemFeedIndex].answer = newFeedBack.value;
       answerList.value[currItemFeedIndex].parseAnswer = parse(newFeedBack.value);
@@ -254,7 +280,10 @@ import {ref, onMounted, computed} from 'vue';
     copy(txt, id, event)
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   const confirmNext = () => {
     const { productCode, type } = route.query;
     router.push({path: '/selectFiles', query: { productCode, type, from: 'index' }})
@@ -266,7 +295,10 @@ import {ref, onMounted, computed} from 'vue';
     const res = await touchMessage({ orderNo })
     touchMessageOrigin.value = res.data;
     touchMessageTxt.value = parse(res.data);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   }
 
   
@@ -294,7 +326,11 @@ import {ref, onMounted, computed} from 'vue';
   const isLoading = ref(true);
 
   const getOrderDetail = async () => {
+<<<<<<< HEAD
     const res = await orderDetail({ orderNo, refresh: false, export_report: false})
+=======
+    const res = await orderDetail({ orderNo, refresh: false })
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
     isLoading.value = false;
     orderDetailInfo.value = res.data;
     orderContent.value = res.data.orderContentPo;
@@ -311,12 +347,17 @@ import {ref, onMounted, computed} from 'vue';
     })
     pictures = res.data.pictures;
   }
+<<<<<<< HEAD
 //复制报告
+=======
+
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   const copyReport = (event) => {
     const txt = answerList.value.map(val => `${val.agentName}\n${val.answer}`).join('\n\n')
     copyTxt(`${orderContent.value.title}\n\n${txt}`, 'refresh', event)
   }
 
+<<<<<<< HEAD
   /**
    * 2024.11.18新增:导出报告
    * @author janjiang
@@ -369,6 +410,8 @@ import {ref, onMounted, computed} from 'vue';
     }
   }
 
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   onMounted(async() => {
     if(!store.glmToken) {
       const res = await glmToken();
@@ -399,6 +442,7 @@ import {ref, onMounted, computed} from 'vue';
       background: url('@img/view_origin.png') no-repeat 0 0 / 70px 32px;
       margin-right: 12px;
     }
+<<<<<<< HEAD
     .export_report {
       padding-right:6px;
       font-size: 15px;
@@ -409,6 +453,8 @@ import {ref, onMounted, computed} from 'vue';
         color: #999;
       }
     }
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
     .refresh {
       font-size: 15px;
       font-weight: normal;
@@ -578,9 +624,14 @@ import {ref, onMounted, computed} from 'vue';
         font-weight: bold;
         margin-bottom: 10px;
       }
+<<<<<<< HEAD
       .touch_txt{
         margin-bottom: 14px;
         color: #666;
+=======
+      .touch_txt {
+        margin-bottom: 14px;
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
       }
     }
     .menu {
@@ -596,6 +647,7 @@ import {ref, onMounted, computed} from 'vue';
         width: 20px;
       }
     }
+<<<<<<< HEAD
     .success-export .title-left {
       text-align: left;
       font-weight: bold;
@@ -627,6 +679,8 @@ import {ref, onMounted, computed} from 'vue';
       margin-bottom: 10px;
     }
 
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   }
 </style>
 
@@ -639,6 +693,7 @@ import {ref, onMounted, computed} from 'vue';
     height: 50vh;
   }
   .module_content {
+<<<<<<< HEAD
 
     p, li {
       margin-bottom: 12px;
@@ -660,6 +715,8 @@ import {ref, onMounted, computed} from 'vue';
   //保证润色生成的作文每个段落之间间隔一行，更加清晰
   .touch_txt {
 
+=======
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
     p, li {
       margin-bottom: 12px;
     }

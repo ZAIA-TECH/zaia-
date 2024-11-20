@@ -46,7 +46,11 @@ export default {
   passagesSave: '/order/passages/save', // 段落上传
   parseGeneration: '/order/passages/parse/generation', // 段落解析生成
   reportKudos: '/order/report/kudos', // 得分报告点赞
+<<<<<<< HEAD
   orderRecast: '/order', // 重新批改
+=======
+  orderRecast: '/order/recast', // 重新批改
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
   chatMessageSave: '/order/chat/message/save', // 订单问小雅内容保存
 
   memberCenter: '/user/member/center', // 会员中心页
@@ -63,6 +67,7 @@ export default {
 
   agentGetOne: '/agent/get/one', // 获取agent详情
 
+<<<<<<< HEAD
   updateTitle: '/order/update/title', // 编辑标题
   updateReporting: '/order/update/reporting', // 编辑报告
   reportingOverride: '/order/reporting/override', // 精批报告重写
@@ -71,4 +76,14 @@ export default {
 
   agentPreviews: '/agent/previews', // 预览接口
   agentUseShardingCode: '/agent/use/sharding/code', // 使用分享吗接口
+=======
+  updateTitle: 'order/update/title', // 编辑标题
+  updateReporting: '/order/update/reporting', // 编辑报告
+  reportingOverride: '/order/reporting/override', // 精批报告重写
+
+  touchMessage: '/order/touch/message', // 全文润色
+
+  agentPreviews: '/agent/previews', // 预览接口
+  agentUseShardingCode: 'agent/use/sharding/code', // 使用分享吗接口
+>>>>>>> 2208165747dded217e56bd1408bbaa80b4e7d8e9
 }
