@@ -23,12 +23,12 @@ export async function orderContentEcho (params) {
 
 export async function orderImageParsing (data, config={}) {
   let url = api.orderImageParsing;
-  return await service.post(url, data, { 
+  return await service.post(url, data, {
     isloading: false,
     ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
-    } 
+    }
   })
 }
 
@@ -221,7 +221,6 @@ export async function exportWordReport (data){
   const url = api.exportWordReport;
   return await service.post(url,data) //应该不要“导出中”吧...
 }
-
 export async function touchMessage (params) {
   const url = api.touchMessage;
   return await service.get(url, { params, loadingMsg: '润色中...' })
