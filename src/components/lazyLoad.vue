@@ -54,7 +54,7 @@ const isEnd = computed(() => {
   return totalPage.value <= pageNum.value;
 })
 
-const isDocument = props.scrollEl === document;
+const isDocument = toString.call(props.scrollEl) === '[object HTMLDocument]';
 
 const init = () => {
   setTimeout(() => {

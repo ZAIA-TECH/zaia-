@@ -2,9 +2,15 @@
   <div class="feed_back_list">
     <div class="title">选择反馈模块</div>
     <div class="select_label">已经选择：</div>
-    <div :class="['selected', !checkedText ? 'un_select' : '' ]">{{checkedText || '暂未选择任何模块'}}</div>
+    <div :class="['selected', !checkedText ? 'un_select' : '']">{{ checkedText || '暂未选择任何模块' }}</div>
     <div class="tab_bar">
-      <div @click="changeBar(index)" v-for="(item, index) in tabBars" :class="['bar_item', activeBar == index ? 'active_bar' : '']">{{ item.name }}</div>
+      <div
+        @click="changeBar(index)"
+        v-for="(item, index) in tabBars"
+        :class="['bar_item', activeBar == index ? 'active_bar' : '']"
+      >
+        {{ item.name }}
+      </div>
     </div>
 
     <div class="list" v-if="feedBackList.length">
@@ -13,12 +19,20 @@
           <div class="item_left">
             <div class="item_name">
               {{ item.agentName }}
-              <span class="item_state" v-if="activeBar == 2">({{ item.agentState == 2 ? `使用码：${item.sharingCode}` : authList[item.agentState] }})</span>
+              <span class="item_state" v-if="activeBar == 2"
+                >({{ item.agentState == 2 ? `使用码：${item.sharingCode}` : authList[item.agentState] }})</span
+              >
               <span class="item_state" v-if="activeBar == 3">(by用户{{ item.agentSource.substr(-6) }})</span>
             </div>
             <div class="item_intro">{{ item.agentIntro }}</div>
           </div>
-          <van-checkbox :disabled="checkedAgents.length >= maxLength && !item.checked" v-model="item.checked" shape="square" checked-color="#62c7b4" :icon-size="checkBoxSize"></van-checkbox>
+          <van-checkbox
+            :disabled="checkedAgents.length >= maxLength && !item.checked"
+            v-model="item.checked"
+            shape="square"
+            checked-color="#62c7b4"
+            :icon-size="checkBoxSize"
+          ></van-checkbox>
         </div>
         <template v-if="activeBar == 2">
           <div @click="toggleOperate(item)"><van-icon name="edit" :size="editSize" color="#62c7b4" /></div>
@@ -33,13 +47,11 @@
       暂无可用反馈 <br />
       请联系客服处理
     </div>
-    
+
     <div class="bot_btns">
       <div class="use_btn" @click="toggleUseCode">填写使用码</div>
       <div class="comfirm_btn" @click="comfimAgent" v-if="feedBackList.length">提交</div>
     </div>
-    
-
 
     <van-dialog v-model:show="showUseCode" title="填写使用码" show-cancel-button @confirm="codeConfirm">
       <div class="use_code">
@@ -49,16 +61,22 @@
 
     <van-dialog class="operate_dia" v-model:show="showOperate" title="" show-cancel-button :show-confirm-button="false">
       <div class="operate">
-        <div class="operate_item operate_edit" @click="toEditAgent"><van-icon name="edit" :size="operateSize" color="#62c7b4" /></div>
-        <div class="operate_item" @click="deleteAgent"><van-icon name="delete-o" :size="operateSize" color="#eb546d" /></div>
+        <div class="operate_item operate_edit" @click="toEditAgent">
+          <van-icon name="edit" :size="operateSize" color="#62c7b4" />
+        </div>
+        <div class="operate_item" @click="deleteAgent">
+          <van-icon name="delete-o" :size="operateSize" color="#eb546d" />
+        </div>
       </div>
     </van-dialog>
 
     <div class="add_feed" @click="toCusFeed"><van-icon name="plus" /></div>
 
-    <van-popup v-model:show="showPreView" round position="bottom" >
+    <van-popup v-model:show="showPreView" round position="bottom">
       <div class="example_pop">
-        <div class="pop_title">预览 <span class="cross" @click="showPreView=false"><van-icon name="cross" :size="crossSize" /></span></div>
+        <div class="pop_title">
+          预览 <span class="cross" @click="showPreView = false"><van-icon name="cross" :size="crossSize" /></span>
+        </div>
         <div class="pre_view_tip">您的本次提交作文将作为输入示例</div>
         <div class="pre_view_content" v-html="preViewContent"></div>
       </div>
@@ -67,127 +85,120 @@
 </template>
 
 <script setup>
-  import { ref, reactive, computed } from 'vue'
-  import { fitUnitPx, replacePunctuationWithChinese } from '@/utils/utils'
-  import { useRouter, useRoute } from 'vue-router'
-  import { agentGet, agentDelete, agentPreviews, agentUseShardingCode, orderImageParsing } from '@/api/index'
-  import { onMounted } from 'vue'
-  import { showConfirmDialog, showToast } from 'vant';
-  import { useStore } from '@/stores/index'
-  import { parse  } from 'marked'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { fitUnitPx, replacePunctuationWithChinese } from '@/utils/utils'
+import { useRouter, useRoute } from 'vue-router'
+import { agentGet, agentDelete, agentPreviews, agentUseShardingCode, orderImageParsing } from '@/api/index'
+import { showConfirmDialog, showToast } from 'vant'
+import { useStore } from '@/stores/index'
+import { parse } from 'marked'
+import dictionary from '@/utils/dictionary.js'
 
-  const store = useStore();
+const store = useStore()
 
-  const checkBoxSize = fitUnitPx(16);
-  const crossSize = fitUnitPx(20);
-  const editSize = fitUnitPx(22);
-  const operateSize = fitUnitPx(26);
-  const router = useRouter();
-  const route = useRoute();
+const checkBoxSize = fitUnitPx(16)
+const crossSize = fitUnitPx(20)
+const editSize = fitUnitPx(22)
+const operateSize = fitUnitPx(26)
+const router = useRouter()
+const route = useRoute()
 
-  const activeBar = ref(1)
-  let tabBars = reactive([
-    { name: '最近使用' },
-    { name: '官方出品' },
-    { name: '我创建的' },
-    { name: '创作大厅' },
-  ])
+const activeBar = ref(1)
+let tabBars = reactive([{ name: '最近使用' }, { name: '官方出品' }, { name: '我创建的' }, { name: '创作大厅' }])
 
-  const authList = ['公开','私密','分享']
+const authList = ['公开', '私密', '分享']
 
-  const feedBackList = ref([])
+const feedBackList = ref([])
 
-  
-  const checkedAgents = ref(store.checkedAgents || []);
-  const checkedAgentIds = computed(() => checkedAgents.value.map(val => val.agentId));
-  const checkedText = computed(() => {
-    return Array.from(checkedAgents.value).map(val => val.agentName).join('、')
-  });
+const checkedAgents = ref(store.checkedAgents || [])
+const checkedAgentIds = computed(() => checkedAgents.value.map((val) => val.agentId))
+const checkedText = computed(() => {
+  return Array.from(checkedAgents.value)
+    .map((val) => val.agentName)
+    .join('、')
+})
 
-  const changeBar = (index) => {
-    activeBar.value = index;
-    const item = tabBars[index];
-    feedBackList.value = item.agentResponseVos;
-    feedBackList.value.forEach(val => {
-      val.checked = checkedAgentIds.value.findIndex(v => v == val.agentId) > -1;
-    })
-  }
-
-  const maxLength = 8;
-  const checkedChange = ($event, item) => {
-    if(checkedAgents.value.length >= maxLength && !item.checked) {
-      showToast(`最多只能选择${maxLength}个`)
-      return;
-    }
-    if($event.target.nodeName != 'I') {
-      item.checked = !item.checked
-    };
-    const checkedIndex = checkedAgents.value.findIndex(val => val.agentId == item.agentId);
-    checkedIndex > -1 ? checkedAgents.value.splice(checkedIndex, 1) : checkedAgents.value.push(item);
-  }
-
-
-  const showUseCode = ref(false);
-  const useCode = ref('');
-  const toggleUseCode = () => {
-    showUseCode.value = !showUseCode.value;
-  }
-
-  
-const codeConfirm = async() => {
-  const res = await agentUseShardingCode({ shardingCode: useCode.value });
-  if(!res.data) {
-    showToast('无效的使用码')
-    return;
-  }
-  showToast('您已成功获取反馈')
-  useCode.value = '';
-  activeBar.value = 3;
-  getList();
+const changeBar = (index) => {
+  activeBar.value = index
+  const item = tabBars[index]
+  feedBackList.value = item.agentResponseVos
+  feedBackList.value.forEach((val) => {
+    val.checked = checkedAgentIds.value.findIndex((v) => v == val.agentId) > -1
+  })
 }
 
-  const currExample = ref('')
-  const showOperate = ref(false);
-  const toggleOperate = (item) => {
-    showOperate.value = !showOperate.value;
-    showOperate.value && (currExample.value = item);
+const maxLength = 8
+const checkedChange = ($event, item) => {
+  if (checkedAgents.value.length >= maxLength && !item.checked) {
+    showToast(`最多只能选择${maxLength}个`)
+    return
   }
-
-  const getList = async () => {
-    const res = await agentGet({ language: route.query.type });
-    tabBars = res.data;
-    changeBar(activeBar.value);
+  if ($event.target.nodeName != 'I') {
+    item.checked = !item.checked
   }
+  const checkedIndex = checkedAgents.value.findIndex((val) => val.agentId == item.agentId)
+  checkedIndex > -1 ? checkedAgents.value.splice(checkedIndex, 1) : checkedAgents.value.push(item)
+}
 
-  const toEditAgent = () => {
-    router.push({ path: '/customFeedBack', query: { agentId: currExample.value.agentId, ...route.query } }) 
+const showUseCode = ref(false)
+const useCode = ref('')
+const toggleUseCode = () => {
+  showUseCode.value = !showUseCode.value
+}
+
+const codeConfirm = async () => {
+  const res = await agentUseShardingCode({ shardingCode: useCode.value })
+  if (!res.data) {
+    showToast('无效的使用码')
+    return
   }
+  showToast('您已成功获取反馈')
+  useCode.value = ''
+  activeBar.value = 3
+  getList()
+}
 
-  const deleteAgent = () => {
-    showConfirmDialog({
-      message: '确认删除本反馈？',
-    }).then(async() => {
-      await agentDelete({agentId: currExample.value.agentId})
-      showOperate.value = false;
-      getList();
-    })
-  }
+const currExample = ref('')
+const showOperate = ref(false)
+const toggleOperate = (item) => {
+  showOperate.value = !showOperate.value
+  showOperate.value && (currExample.value = item)
+}
 
-  const toCusFeed = () => {
-    router.push({ path: '/customFeedBack', query: route.query })
-  }
+const getList = async () => {
+  const res = await agentGet({ language: route.query.type })
+  tabBars = res.data
+  changeBar(activeBar.value)
+}
 
-  const comfimAgent = () => {
-    store.checkedAgents = checkedAgents.value;
-    console.log(store.checkedAgents.length)
-    history.go(-1);
-  }
+const toEditAgent = () => {
+  router.push({ path: '/customFeedBack', query: { agentId: currExample.value.agentId, ...route.query } })
+}
 
-  
+const deleteAgent = () => {
+  showConfirmDialog({
+    message: '确认删除本反馈？'
+  }).then(async () => {
+    await agentDelete({ agentId: currExample.value.agentId })
+    showOperate.value = false
+    getList()
+  })
+}
+
+const toCusFeed = () => {
+  router.push({ path: '/customFeedBack', query: route.query })
+}
+
+const comfimAgent = () => {
+  store.checkedAgents = checkedAgents.value
+  console.log(store.checkedAgents.length)
+  history.go(-1)
+}
+
 const showPreView = ref(false)
 const preViewContent = ref('')
 
-const getPreViewTxt = async(item) => {
+const getPreViewTxt = async (item) => {
   const res = await agentPreviews({
     ...item,
     language: route.query.type,
@@ -195,51 +206,52 @@ const getPreViewTxt = async(item) => {
       ...store.viewContent
     }
   })
-  preViewContent.value = parse(res.data);
-  showPreView.value = true;
+  preViewContent.value = parse(res.data)
+  showPreView.value = true
 }
 
-const effectView = async(item) => {
-  const label = JSON.parse(store.viewContent.label) 
-  if(!store.fileList?.length || !store.viewContent.title || !label.cnLiterary) {
-    showToast('请完善作文信息');
+const effectView = async (item) => {
+  const label = JSON.parse(store.viewContent.label)
+  if (!store.fileList?.length || !store.viewContent.title || !label.cnLiterary) {
+    showToast('请完善作文信息')
     return
   }
-  const contentList = [];
-  preViewContent.value = '';
-  store.fileList.forEach(async (val,index) => {
-    const formData = new FormData();
+  const contentList = []
+  preViewContent.value = ''
+  store.fileList.forEach(async (val, index) => {
+    const formData = new FormData()
     formData.append('file', val.file)
     formData.append('orderNo ', route.query.orderNo)
     formData.append('productCode ', route.query.productCode)
     const res = await orderImageParsing(formData, { isloading: true })
-    let content = '';
-    contentList[`${index}`] = res.data.map(val => val.text).join("\n");
-    if(Object.keys(contentList).length == store.fileList.length) {
-      content = Object.values(contentList).join("\n");
-      if(route.query.productCode == 'cn-article-rectify') {
+    let content = ''
+    contentList[`${index}`] = res.data.map((val) => val.text).join('\n')
+    if (Object.keys(contentList).length == store.fileList.length) {
+      content = Object.values(contentList).join('\n')
+      if (route.query.productCode == 'cn-article-rectify') {
         content = replacePunctuationWithChinese(content)
       }
-      store.viewContent.content = content;
+      store.viewContent.content = content
       getPreViewTxt(item)
     }
   })
 }
 
-onMounted(async() => {
+onMounted(async () => {
   await getList()
-  if(!store.checkedAgents.length) {
+  if (!store.checkedAgents.length) {
     checkedAgents.value = [...tabBars[0].agentResponseVos]
-    changeBar(activeBar.value);
+    changeBar(activeBar.value)
   }
 })
-
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .feed_back_list {
   min-height: inherit;
-  padding: 20px;
+  padding: 16px 16px 66px;
+  padding-bottom: calc(66px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(66px + env(safe-area-inset-bottom));
   font-size: 14px;
   color: #333;
   .title {
@@ -328,7 +340,8 @@ onMounted(async() => {
     border-radius: 50%;
     position: fixed;
     left: calc(50% + 114px);
-    bottom: 80px;
+    bottom: calc(100px + constant(safe-area-inset-bottom));
+    bottom: calc(100px + env(safe-area-inset-bottom));
   }
   .example_pop {
     padding: 20px;
@@ -356,12 +369,19 @@ onMounted(async() => {
   }
   .bot_btns {
     @include flex-center;
-    margin-top: 40px;
-    padding: 0 8px;
+    padding: 14px 16px;
+    position: fixed;
+    bottom: 0;
+    width: 375px;
+    left: calc(50% - 187.5px);
+    box-shadow: 0 0 6px #e5e5e5;
+    background: #fff;
+    padding-bottom: calc(14px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
     > div {
       width: 240px;
       text-align: center;
-      padding: 9px 0;
+      padding: 10px 0;
       font-size: 13px;
       margin: 0 8px;
       line-height: 1;
@@ -372,7 +392,7 @@ onMounted(async() => {
       border: 1px solid #62c7b4;
       color: #62c7b4;
     }
-    .comfirm_btn{
+    .comfirm_btn {
       background: #62c7b4;
       color: #fff;
     }
@@ -401,7 +421,7 @@ onMounted(async() => {
     height: 48px;
     @include flex-center;
     border-radius: 50%;
-    background: #FBF0F0;
+    background: #fbf0f0;
   }
   .operate_edit {
     background: #dbf5f0;

@@ -4,41 +4,53 @@
       <span></span>
       <div class="right_btns">
         <div class="view_origin" @click="originView"></div>
-        <div class = "export_report" id="export_report" @click="exportReport">导出WORD</div>
+        <div class="export_report" id="export_report" @click="exportReport">导出WORD</div>
         <div class="refresh" id="refresh" @click="copyReport">复制报告</div>
       </div>
     </div>
     <div class="report_content">
       <div class="top_nav">
-        <span v-for="(item, index) in topNav" :key="index + 's'" :class="{ 'active': activeNav == index }" @click="changeNav(index)">
-          {{item}}
+        <span
+          v-for="(item, index) in topNav"
+          :key="index + 's'"
+          :class="{ active: activeNav == index }"
+          @click="changeNav(index)"
+        >
+          {{ item }}
         </span>
       </div>
       <div class="error_content" v-if="activeNav == 0">
         <template v-if="!isLoading">
-          <div class="edit_title">{{ orderContent.title }} <span class="edit" @click="editTitle"><van-icon name="edit" color="#309E73" /></span></div>
+          <div class="edit_title">
+            {{ orderContent.title }}
+            <span class="edit" @click="editTitle"><van-icon name="edit" color="#309E73" /></span>
+          </div>
           <div class="title_bot_tip">每个反馈记得评价，下次报告会更加精准</div>
           <div class="comment_module" v-for="(item, index) in answerList" :key="item.agentId">
             <div class="module_title">
-              {{item.agentName}}
+              {{ item.agentName }}
             </div>
             <div class="module_content" v-html="item.parseAnswer"></div>
             <div class="module_operate">
               <div class="operate_group">
-                <span class="operate_item" @click="editFeedBack(index)"><van-icon name="edit" color="#309E73" />编辑</span>
-                <span class="operate_item" @click="override(index)"><van-icon name="replay" color="#309E73" />重写</span>
+                <span class="operate_item" @click="editFeedBack(index)"
+                  ><van-icon name="edit" color="#309E73" />编辑</span
+                >
+                <span class="operate_item" @click="override(index)"
+                  ><van-icon name="replay" color="#309E73" />重写</span
+                >
               </div>
               <div class="operate_group">
                 <span class="operate_item">
-                  <img src="@img/thumb_up_active.png" v-if="item.evaluateAi == 1">
-                  <img src="@img/thumb_up.png" @click="evaluatePost(index, 1)" alt="" v-else>
+                  <img src="@img/thumb_up_active.png" v-if="item.evaluateAi == 1" />
+                  <img src="@img/thumb_up.png" @click="evaluatePost(index, 1)" alt="" v-else />
                 </span>
                 <span class="operate_item">
-                  <img src="@img/poor_rating_active.png" v-if="item.evaluateAi == 2">
-                  <img src="@img/poor_rating.png" @click="evaluatePost(index, 2)" alt="" v-else>
+                  <img src="@img/poor_rating_active.png" v-if="item.evaluateAi == 2" />
+                  <img src="@img/poor_rating.png" @click="evaluatePost(index, 2)" alt="" v-else />
                 </span>
                 <span class="operate_item" :id="`copy_${index}`">
-                  <img src="@img/copy.svg" @click="copyTxt(item.answer, `copy_${index}`, $event)" alt="">
+                  <img src="@img/copy.svg" @click="copyTxt(item.answer, `copy_${index}`, $event)" alt="" />
                 </span>
               </div>
             </div>
@@ -56,15 +68,15 @@
           </div>
           <div class="operate_group">
             <span class="operate_item">
-              <img src="@img/thumb_up_active.png" v-if="orderDetailInfo.touchMessageEvaluateAi == 1">
-              <img src="@img/thumb_up.png" @click="evaluatePost(-1, 1)" alt="" v-else>
+              <img src="@img/thumb_up_active.png" v-if="orderDetailInfo.touchMessageEvaluateAi == 1" />
+              <img src="@img/thumb_up.png" @click="evaluatePost(-1, 1)" alt="" v-else />
             </span>
             <span class="operate_item">
-              <img src="@img/poor_rating_active.png" v-if="orderDetailInfo.touchMessageEvaluateAi == 2">
-              <img src="@img/poor_rating.png" @click="evaluatePost(-1, 2)" alt="" v-else>
+              <img src="@img/poor_rating_active.png" v-if="orderDetailInfo.touchMessageEvaluateAi == 2" />
+              <img src="@img/poor_rating.png" @click="evaluatePost(-1, 2)" alt="" v-else />
             </span>
             <span class="operate_item" :id="`copy_${-1}`">
-              <img src="@img/copy.svg" @click="copyTxt(touchMessageOrigin, `copy_${-1}`, $event)" alt="">
+              <img src="@img/copy.svg" @click="copyTxt(touchMessageOrigin, `copy_${-1}`, $event)" alt="" />
             </span>
           </div>
         </div>
@@ -72,35 +84,30 @@
 
       <!-- <zhParagraphEdit ref="zhEdit" v-show="activeNav == 1" v-if="paraEditRender" :detail="detail" :orderContent="orderContent" :refreshNum="refreshNum" :orderDetailInfo="orderDetailInfo"></zhParagraphEdit> -->
 
-      <yaChart ref="yachart" v-show="activeNav == 2" v-if="chartRender" :orderDetailInfo="orderDetailInfo" :dicDetailDesc="dicDetailDesc" :activeNav="activeNav"></yaChart>
+      <yaChart
+        ref="yachart"
+        v-show="activeNav == 2"
+        v-if="chartRender"
+        :orderDetailInfo="orderDetailInfo"
+        :dicDetailDesc="dicDetailDesc"
+        :activeNav="activeNav"
+      ></yaChart>
     </div>
 
-    <van-dialog v-model:show="showEditTitle" title="编辑报告标题" show-cancel-button @confirm="confirmTitle" @cancel="cancelTitle">
-      <van-field v-model="newTitle" label="" placeholder="请输入报告标题" maxlength="20" />
-    </van-dialog>
-
-    <!-- 导出word的弹窗 -->
     <van-dialog
-        class="success-export"
-        v-model:show="showExportDialog"
-        :show-confirm-button="false"
-        style="max-width: 360px;"
+      v-model:show="showEditTitle"
+      title="编辑报告标题"
+      show-cancel-button
+      @confirm="confirmTitle"
+      @cancel="cancelTitle"
     >
-      <template #title>
-        <div class="title-left">导出成功</div>
-      </template>
-      <div class="dialog-content">
-        <p class="text-left">点击复制链接，可以发送给其他人，也可以将链接粘贴到微信或浏览器下载。</p>
-
-        <span class="copy-link" @click="copyLink">复制链接</span>
-
-      </div>
+      <van-field v-model="newTitle" label="" placeholder="请输入报告标题" maxlength="20" />
     </van-dialog>
 
     <van-popup v-model:show="showEditFeed" position="bottom" round>
       <div class="pop_title">编辑反馈内容</div>
       <div class="edit_feed_b">
-        <van-field v-model="newFeedBack" label="" placeholder="请输入反馈内容" type="textarea"/>
+        <van-field v-model="newFeedBack" label="" placeholder="请输入反馈内容" type="textarea" />
       </div>
       <div class="feed_bot_btn">
         <div class="use_btn" @click="cancelFeed">取消</div>
@@ -108,7 +115,14 @@
       </div>
     </van-popup>
 
-    <van-dialog v-model:show="isLoading" @confirm="confirmNext" :confirm-button-text="'先改下一篇'">
+    <van-dialog
+      v-model:show="isLoading"
+      @confirm="confirmNext"
+      @cancel="toIndex"
+      :confirm-button-text="'改下一篇'"
+      :cancelButtonText="'返回首页'"
+      :showCancelButton="true"
+    >
       <div class="load_txt">
         <van-loading :size="fitUnitPx(50)" color="#1989fa" :vertical="true" text-color="#666">
           <div>分析中...</div>
@@ -120,133 +134,158 @@
         </van-loading>
       </div>
     </van-dialog>
-    <!--
-        <van-dialog v-model:show="showMenu" title="大纲">
 
-        </van-dialog>
+    <!-- 导出word的弹窗 -->
+    <van-dialog
+      class="success-export"
+      v-model:show="showExportDialog"
+      :show-confirm-button="false"
+      style="max-width: 360px"
+    >
+      <template #title>
+        <div class="title-left">导出成功</div>
+      </template>
+      <div class="dialog-content">
+        <p class="text-left">点击复制链接，可以发送给其他人，也可以将链接粘贴到微信或浏览器下载。</p>
 
-        <div class="menu"><img src="@img/menu.svg" alt=""></div> -->
-    <backIndex></backIndex>
+        <span class="copy-link" id="copy-link" @click="copyLink">复制链接</span>
+      </div>
+    </van-dialog>
+    <!-- 
+    <van-dialog v-model:show="showMenu" title="大纲">
+      
+    </van-dialog>
+
+    <div class="menu"><img src="@img/menu.svg" alt=""></div> -->
+    <backIndex v-show="activeNav != 2"></backIndex>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { updateTitle, orderDetail, updateReporting, reportingOverride, touchMessage, glmToken, exportWordReport } from '@/api';
+import { ref, onMounted } from 'vue'
+import {
+  updateTitle,
+  orderDetail,
+  updateReporting,
+  reportingOverride,
+  touchMessage,
+  glmToken,
+  exportWordReport
+} from '@/api'
 import { scoreOrderComment } from '@/api/aiApi'
 import { v1Chat } from '@/chatBaseApi'
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'
 import { copy, fitUnitPx } from '@/utils/utils'
 import dictionary from '@/utils/dictionary'
 import { parse } from 'marked'
-import backIndex from '@/components/backIndex.vue';
-import { showToast, showImagePreview, showConfirmDialog } from 'vant';
+import backIndex from '@/components/backIndex.vue'
+import { showToast, showImagePreview, showConfirmDialog } from 'vant'
 import { useStore } from '@/stores'
 import zhParagraphEdit from './zhParagraphEdit.vue'
 import yaChart from './yaChart.vue'
 
-const store = useStore();
-const route = useRoute();
-const router = useRouter();
+const store = useStore()
+const route = useRoute()
+const router = useRouter()
 
 const zhEdit = ref(null)
-const orderNo = route.query.orderNo;
+const orderNo = route.query.orderNo
 
-let orderContent = ref({});
+let orderContent = ref({})
 let dicDetailDesc = ''
 
-const chartRender = ref(false);
-let answerList = ref([]);
-const touchMessageOrigin = ref('');
-const touchMessageTxt = ref('');
+const chartRender = ref(false)
+let answerList = ref([])
+const touchMessageOrigin = ref('')
+const touchMessageTxt = ref('')
 
-let botTimer = null;
+let botTimer = null
 
 const yachart = ref(null)
 
-const topNav = ref(['精批报告', '全文润色', '问小雅']);
-const activeNav = ref(0);
-let pictures = [];
+const topNav = ref(['精批报告', '全文润色', '问小雅'])
+const activeNav = ref(0)
+let pictures = []
 
 const originView = () => {
   pictures.length && showImagePreview(pictures)
 }
 
-const orderDetailInfo = ref({});
+const orderDetailInfo = ref({})
 
-const showEditTitle = ref(false);
+const showEditTitle = ref(false)
 const newTitle = ref('')
 const editTitle = () => {
-  showEditTitle.value = true;
+  showEditTitle.value = true
 }
 
 const cancelTitle = () => {
-  showEditTitle.value = false;
-  newTitle.value = '';
+  showEditTitle.value = false
+  newTitle.value = ''
 }
 
 const confirmTitle = async () => {
   await updateTitle({ orderNo, title: newTitle.value })
-  orderContent.value.title = newTitle.value;
-  cancelTitle();
+  orderContent.value.title = newTitle.value
+  cancelTitle()
 }
 
-const showEditFeed = ref(false);
+const showEditFeed = ref(false)
 const newFeedBack = ref('')
-let currItemFeedIndex = '';
+let currItemFeedIndex = ''
 const editFeedBack = (index) => {
-  const answer = index > -1 ? answerList.value[index].answer : touchMessageOrigin.value;
-  currItemFeedIndex = index;
-  showEditFeed.value = true;
-  newFeedBack.value = answer;
+  const answer = index > -1 ? answerList.value[index].answer : touchMessageOrigin.value
+  currItemFeedIndex = index
+  showEditFeed.value = true
+  newFeedBack.value = answer
 }
 
 const cancelFeed = () => {
-  showEditFeed.value = false;
+  showEditFeed.value = false
   setTimeout(() => {
-    newFeedBack.value = '';
+    newFeedBack.value = ''
   }, 600)
 }
 
 const comfirmFeed = async () => {
-  const agentId = activeNav.value == 1 ? '-1' : answerList.value[currItemFeedIndex].agentId;
+  const agentId = activeNav.value == 1 ? '-1' : answerList.value[currItemFeedIndex].agentId
   await updateReporting({ orderNo, agentId, content: newFeedBack.value, evaluateAi: 1 })
-  if(activeNav.value == 1) {
-    touchMessageOrigin.value = newFeedBack.value;
-    touchMessageTxt.value = parse(newFeedBack.value);
+  if (activeNav.value == 1) {
+    touchMessageOrigin.value = newFeedBack.value
+    touchMessageTxt.value = parse(newFeedBack.value)
   } else {
-    answerList.value[currItemFeedIndex].answer = newFeedBack.value;
-    answerList.value[currItemFeedIndex].parseAnswer = parse(newFeedBack.value);
-    answerList.value[currItemFeedIndex].evaluateAi = 1;
+    answerList.value[currItemFeedIndex].answer = newFeedBack.value
+    answerList.value[currItemFeedIndex].parseAnswer = parse(newFeedBack.value)
+    answerList.value[currItemFeedIndex].evaluateAi = 1
   }
   showToast('提交成功')
   cancelFeed()
 }
 
 const override = async (index) => {
-  if(index > -1) {
-    answerList.value[index].isOverride = true;
+  if (index > -1) {
+    answerList.value[index].isOverride = true
   }
-  const content = index > -1 ? answerList.value[index].answer : touchMessageOrigin.value;
-  const agentId = index > -1 ? answerList.value[index].agentId : '-1';
-  const res = await reportingOverride({agentId, orderNo, content });
-  if(index > -1) {
-    answerList.value[index].answer = res.data;
-    answerList.value[index].parseAnswer = parse(res.data);
-    answerList.value[index].isOverride = false;
+  const content = index > -1 ? answerList.value[index].answer : touchMessageOrigin.value
+  const agentId = index > -1 ? answerList.value[index].agentId : '-1'
+  const res = await reportingOverride({ agentId, orderNo, content })
+  if (index > -1) {
+    answerList.value[index].answer = res.data
+    answerList.value[index].parseAnswer = parse(res.data)
+    answerList.value[index].isOverride = false
   } else {
-    touchMessageOrigin.value = res.data;
-    touchMessageTxt.value = parse(res.data);
+    touchMessageOrigin.value = res.data
+    touchMessageTxt.value = parse(res.data)
   }
 }
 
-const evaluatePost = async(index, value) => {
-  const agentId = index > -1 ? answerList.value[index].agentId : '-1';
-  await updateReporting({ orderNo, evaluateAi: value, agentId });
-  if(index > -1) {
-    answerList.value[index].evaluateAi = value;
+const evaluatePost = async (index, value) => {
+  const agentId = index > -1 ? answerList.value[index].agentId : '-1'
+  await updateReporting({ orderNo, evaluateAi: value, agentId })
+  if (index > -1) {
+    answerList.value[index].evaluateAi = value
   } else {
-    orderDetailInfo.value.touchMessageEvaluateAi = value;
+    orderDetailInfo.value.touchMessageEvaluateAi = value
   }
 }
 
@@ -255,127 +294,115 @@ const copyTxt = (txt, id, event) => {
 }
 
 const confirmNext = () => {
-  const { productCode, type } = route.query;
-  router.push({path: '/selectFiles', query: { productCode, type, from: 'index' }})
+  const { productCode, type } = route.query
+  router.push({ path: '/selectFiles', query: { productCode, type, from: 'index' } })
 }
-
 
 const polish = async () => {
-  if(touchMessageTxt.value) return;
+  if (touchMessageTxt.value) return
   const res = await touchMessage({ orderNo })
-  touchMessageOrigin.value = res.data;
-  touchMessageTxt.value = parse(res.data);
+  touchMessageOrigin.value = res.data
+  touchMessageTxt.value = parse(res.data)
 }
 
-
 const changeNav = (index) => {
-  clearTimeout(botTimer);
-  unAutoBot();
-  activeNav.value = index;
-  index == 2 && (chartRender.value = true);
-  index == 1 && polish();
-  if(yachart.value) {
-    yachart.value.forbidAutoBot();
+  clearTimeout(botTimer)
+  unAutoBot()
+  activeNav.value = index
+  index == 2 && (chartRender.value = true)
+  index == 1 && polish()
+  if (yachart.value) {
+    yachart.value.forbidAutoBot()
   }
 }
 
 const unAutoBot = () => {
   // autoBot = false;
-  yachart.value && yachart.value.forbidAutoBot();
+  yachart.value && yachart.value.forbidAutoBot()
 }
 
-const refreshNum = ref(0);
-const correctionsNumber = ref(0);
+const refreshNum = ref(0)
+const correctionsNumber = ref(0)
 
-let label = {};
+let label = {}
 
-const isLoading = ref(true);
+const isLoading = ref(true)
 
 const getOrderDetail = async () => {
   const res = await orderDetail({ orderNo, refresh: false })
-  isLoading.value = false;
-  orderDetailInfo.value = res.data;
-  orderContent.value = res.data.orderContentPo;
-  label = JSON.parse(orderContent.value.label);
-  dicDetailDesc = label.cnLiterary?.dicDetailDesc || label.enGrade?.dicDetailDesc;
-  if(res.data.touchMessage) {
-    touchMessageOrigin.value = res.data.touchMessage;
-    touchMessageTxt.value = parse(res.data.touchMessage);
+  isLoading.value = false
+  orderDetailInfo.value = res.data
+  orderContent.value = res.data.orderContentPo
+  label = JSON.parse(orderContent.value.label)
+  dicDetailDesc = label.cnLiterary?.dicDetailDesc || label.enGrade?.dicDetailDesc
+  if (res.data.touchMessage) {
+    touchMessageOrigin.value = res.data.touchMessage
+    touchMessageTxt.value = parse(res.data.touchMessage)
   }
-  answerList.value = res.data.answerList;
-  answerList.value.forEach(val => {
-    val.parseAnswer = parse(val.answer);
-    val.isOverride = false;
+  answerList.value = res.data.answerList
+  answerList.value.forEach((val) => {
+    val.parseAnswer = parse(val.answer)
+    val.isOverride = false
   })
-  pictures = res.data.pictures;
+  pictures = res.data.pictures
 }
 
 const copyReport = (event) => {
-  const txt = answerList.value.map(val => `${val.agentName}\n${val.answer}`).join('\n\n')
+  const txt = answerList.value.map((val) => `${val.agentName}\n${val.answer}`).join('\n\n')
   copyTxt(`${orderContent.value.title}\n\n${txt}`, 'refresh', event)
 }
 
-/**
- * 2024.11.18新增:导出报告
- * @author janjiang
- * 1、新增<导出Word>按钮，以链接按钮样式出现，<查看原文>按钮左移
- * 2、点击<导出Word>，弹出弹窗
- * 3、点击弹窗的<复制链接>，复制oss地址，关闭弹窗。toast提示：复制成功
- */
-const showExportDialog = ref(false);
-const ossLink = ref('');
+const toIndex = () => {
+  if (store.isApp) {
+    window.android.backIndex()
+  } else {
+    router.push('/')
+  }
+}
 
-const exportReport = async() => {
-  try{
+const showExportDialog = ref(false)
+const ossLink = ref('')
+
+const exportReport = async () => {
+  try {
     //准备数据
-    const processedMarkdownContent = answerList.value.map(item => {
+    const processedMarkdownContent = answerList.value.map((item) => {
       return {
         agentName: item.agentName,
-        answer: item.answer,
-      };
-    });
+        answer: item.answer
+      }
+    })
     const requestData = {
-      title:orderContent.value.title,
-      markdownContent: processedMarkdownContent,
-    };
+      title: orderContent.value.title,
+      markdownContent: processedMarkdownContent
+    }
 
     //调用/export/word接口生成word文档
-    const response = await exportWordReport(requestData);
-    console.log("response:",response)
+    const response = await exportWordReport(requestData)
     if (response && response.code == 200) {
       ossLink.value = response.data
       showExportDialog.value = true
-    }else{
-      showToast("导出失败，请稍后重试！");
+    } else {
+      showToast('导出失败，请稍后重试！')
     }
-  }catch (error){
-    showToast("导出失败，请检查网络连接！");
+  } catch (error) {
+    showToast('导出失败，请检查网络连接！')
   }
 }
 
-//点击“复制链接”，复制OSS地址到剪贴板
-const copyLink = () => {
-  if (navigator.clipboard){
-    navigator.clipboard
-        .writeText(`《${orderContent.value.title} - 指导报告》下载地址（word格式）\n${ossLink.value}`)
-        .then(() =>{
-          showToast("复制成功");
-          showExportDialog.value = false;
-        }).catch(() =>{
-      showToast("复制失败");
-    });
-  }
+const copyLink = (event) => {
+  const txt = `《${orderContent.value.title} - 指导报告》下载地址（word格式）\n${ossLink.value}`
+  copy(txt, 'copy-link', event)
+  showExportDialog.value = false
 }
 
-
-onMounted(async() => {
-  if(!store.glmToken) {
-    const res = await glmToken();
-    store.glmToken = res.data;
+onMounted(async () => {
+  if (!store.glmToken) {
+    const res = await glmToken()
+    store.glmToken = res.data
   }
   getOrderDetail()
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -401,7 +428,7 @@ onMounted(async() => {
   .refresh {
     font-size: 15px;
     font-weight: normal;
-    color: #B1372F;
+    color: #b1372f;
     line-height: 1;
     &.forbid {
       color: #999;
@@ -412,13 +439,13 @@ onMounted(async() => {
     @include flex-between;
     align-items: flex-end;
     text-align: center;
-    background: #DCF6F2;
+    background: #dcf6f2;
     height: 40px;
     font-weight: bold;
     span {
-      background: #DCF6F2;
+      background: #dcf6f2;
       padding: 14px 0;
-      font-size: 12px;
+      font-size: 14px;
       color: #000;
       line-height: 1;
       width: 100%;
@@ -484,7 +511,7 @@ onMounted(async() => {
     position: relative;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #309E73;
+    color: #309e73;
     &::before {
       content: '';
       position: absolute;
@@ -492,7 +519,7 @@ onMounted(async() => {
       left: 0;
       height: 18px;
       width: 6px;
-      background: #60DBAB;
+      background: #60dbab;
       transform: translateY(-50%);
     }
   }
@@ -510,7 +537,7 @@ onMounted(async() => {
     line-height: 24px;
     font-size: 12px;
     @include flex-center;
-    color: #309E73;
+    color: #309e73;
     padding: 0 6px;
     .van-icon {
       font-size: 14px;
@@ -532,7 +559,7 @@ onMounted(async() => {
   }
   .feed_bot_btn {
     @include flex-between;
-    margin:0 20px 20px;
+    margin: 0 20px 20px;
     > div {
       width: 140px;
       text-align: center;
@@ -547,7 +574,7 @@ onMounted(async() => {
       border: 1px solid #62c7b4;
       color: #62c7b4;
     }
-    .comfirm_btn{
+    .comfirm_btn {
       background: #62c7b4;
       color: #fff;
     }
@@ -569,7 +596,6 @@ onMounted(async() => {
     }
     .touch_txt {
       margin-bottom: 14px;
-      color: #666;
     }
   }
   .menu {
@@ -577,7 +603,7 @@ onMounted(async() => {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #1989FA;
+    background: #1989fa;
     right: 15px;
     bottom: 100px;
     @include flex-center;
@@ -585,43 +611,47 @@ onMounted(async() => {
       width: 20px;
     }
   }
-}
 
-.export_report{
-  padding-right:10px;
-  color:#1989FA;
-}
-.success-export .title-left {
-  text-align: left;
-  font-weight: bold;
-  font-size: 14px;
-  padding-left:15px;
-  margin-top:-15px;
-}
+  .export_report {
+    margin-right: 12px;
+    background: #5d98f0;
+    font-size: 14px;
+    line-height: 1;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: #fff;
+  }
+  .success-export .title-left {
+    text-align: left;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: -8px;
+    text-align: center;
+  }
 
-.dialog-content {
-  display: flex;
-  flex-direction: column;
-  font-size:12px;
-  padding-top:-10px;
-}
+  .dialog-content {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+    padding-top: -10px;
+  }
 
-.text-left {
-  text-align: left;
-  padding-left:15px;
-  padding-right:15px;
-  margin: 8px 0;
-}
+  .text-left {
+    text-align: left;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 8px 0;
+  }
 
-.copy-link{
-  color: #62c7b4;
-  font-size: 12px;
-  cursor: pointer;
-  text-align: right;
-  padding-right:15px;
-  margin-bottom: 10px;
+  .copy-link {
+    color: #62c7b4;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: right;
+    padding-right: 15px;
+    margin-bottom: 10px;
+  }
 }
-
 </style>
 
 <style lang="scss">
@@ -629,11 +659,12 @@ onMounted(async() => {
   .van-tab {
     position: relative;
   }
-  .edit_feed_b  .van-field__control {
+  .edit_feed_b .van-field__control {
     height: 50vh;
   }
   .module_content {
-    p, li {
+    p,
+    li {
       margin-bottom: 12px;
     }
     h2 {
@@ -645,31 +676,14 @@ onMounted(async() => {
     ul li {
       list-style: disc;
     }
-    ul, ol {
+    ul,
+    ol {
       padding-left: 20px;
     }
   }
-
-  //2024.11.18新增
-  //保证润色生成的作文每个段落之间间隔一行，更加清晰
   .touch_txt {
-    p, li {
-      margin-bottom: 12px;
-    }
-    h2 {
-      margin-bottom: 6px;
-    }
-    li {
-      list-style: auto;
-    }
-    ul li {
-      list-style: disc;
-    }
-    ul, ol {
-      padding-left: 20px;
-    }
+    color: #444;
+    line-height: 1.8;
   }
-
-
 }
 </style>

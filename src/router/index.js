@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { setLoginInfo } from '@/utils/utils'
-import { useStore } from '../stores';
-import Cookies from 'js-cookie';
+import { useStore } from '../stores'
+import Cookies from 'js-cookie'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_ROUTER_BASE),
@@ -33,7 +33,7 @@ const router = createRouter({
                 title: '我的'
               },
               component: () => import('@/views/tabs/mine.vue')
-            },
+            }
           ]
         },
         {
@@ -110,7 +110,7 @@ const router = createRouter({
           path: '/identity',
           name: 'Identity',
           meta: {
-            title: '信息选择',
+            title: '信息选择'
           },
           component: () => import('@/views/identity/identity.vue')
         },
@@ -118,7 +118,7 @@ const router = createRouter({
           path: '/aiChat',
           name: 'AiChat',
           meta: {
-            title: '全科家教-小雅老师',
+            title: '全科家教-小雅老师'
           },
           component: () => import('@/views/aiChat/aiChat.vue')
         },
@@ -126,7 +126,7 @@ const router = createRouter({
           path: '/vip',
           name: 'Vip',
           meta: {
-            title: '会员中心',
+            title: '会员中心'
           },
           component: () => import('@/views/vip/vip.vue')
         },
@@ -134,7 +134,7 @@ const router = createRouter({
           path: '/vipAgreement',
           name: 'VipAgreement',
           meta: {
-            title: '会员协议',
+            title: '会员协议'
           },
           component: () => import('@/views/vip/vipAgreement.vue')
         },
@@ -142,7 +142,7 @@ const router = createRouter({
           path: '/setting',
           name: 'Setting',
           meta: {
-            title: '设置',
+            title: '设置'
           },
           component: () => import('@/views/setting/setting.vue')
         },
@@ -150,7 +150,7 @@ const router = createRouter({
           path: '/feedBackList',
           name: 'FeedBackList',
           meta: {
-            title: '反馈列表',
+            title: '反馈列表'
           },
           component: () => import('@/views/feedBackList/feedBackList.vue')
         },
@@ -158,11 +158,58 @@ const router = createRouter({
           path: '/customFeedBack',
           name: 'CustomFeedBack',
           meta: {
-            title: '定制反馈',
+            title: '定制反馈'
           },
           component: () => import('@/views/customFeedBack/customFeedBack.vue')
         },
-        
+        {
+          path: '/classList',
+          name: 'ClassList',
+          meta: {
+            title: '班级列表'
+          },
+          component: () => import('@/views/classList/classList.vue')
+        },
+        {
+          path: '/classDetail',
+          name: 'classDetail',
+          meta: {
+            title: '班级设置'
+          },
+          component: () => import('@/views/classDetail/classDetail.vue')
+        },
+        {
+          path: '/classAssignment',
+          name: 'classAssignment',
+          meta: {
+            title: '班级作业'
+          },
+          component: () => import('@/views/classAssignment/classAssignment.vue')
+        },
+        {
+          path: '/classCorrect',
+          name: 'classCorrect',
+          meta: {
+            title: '批改要求'
+          },
+          component: () => import('@/views/classAssignment/classCorrect.vue')
+        },
+        {
+          path: '/assignmentDetail',
+          name: 'assignmentDetail',
+          meta: {
+            title: '作业详情'
+          },
+          component: () => import('@/views/classAssignment/assignmentDetail.vue')
+        },
+        {
+          path: '/taskDetail',
+          name: 'taskDetail',
+          meta: {
+            title: '作业批改详情'
+          },
+          component: () => import('@/views/taskDetail/taskDetail.vue')
+        },
         {
           path: '/test',
           name: 'Test',
@@ -170,22 +217,22 @@ const router = createRouter({
             keepAlive: true
           },
           component: () => import('@/views/correctionReport/enParagraphEdit.vue')
-        },
+        }
       ]
-    },
+    }
   ],
   scrollBehavior() {
     return {
       top: 0
     }
-  } 
+  }
 })
 
-const whitePageName = ['Index', 'Login', 'Identity', 'Mine'];
+const whitePageName = ['Index', 'Login', 'Identity', 'Mine']
 
 router.beforeEach((to, from, next) => {
   const store = useStore()
-  if(to.query.userId && to.query.token) {
+  if (to.query.userId && to.query.token) {
     const loginInfo = {
       userId: to.query.userId,
       token: to.query.token,
@@ -194,31 +241,31 @@ router.beforeEach((to, from, next) => {
       vipStatus: to.query.vipStatus
     }
     setLoginInfo(loginInfo)
-    store.userId = to.query.userId;
-    store.isLogin = true;
+    store.userId = to.query.userId
+    store.isLogin = true
   }
-  document.title = to.meta?.title || '作文说';
-  if(to.name == 'CorrectComposition') {
-    document.title = to.query.type == 'zh' ? '中文作文批改' : '英文作文批改';
+  document.title = to.query.documentTitle || to.meta?.title || '作文说'
+  if (to.name == 'CorrectComposition') {
+    document.title = to.query.type == 'zh' ? '中文作文批改' : '英文作文批改'
   }
-  if(whitePageName.indexOf(to.name) == -1 && !Cookies.get('token')) {
+  if (whitePageName.indexOf(to.name) == -1 && !Cookies.get('token')) {
     // store.showLogin = true;
-    next({path: '/login', query: { backPath: encodeURIComponent(to.fullPath) }})
-    if(from.name !== 'Index' && from.name !== 'Mine') {
+    next({ path: '/login', query: { backPath: encodeURIComponent(to.fullPath) } })
+    if (from.name !== 'Index' && from.name !== 'Mine') {
       return { name: 'Index' }
     }
-    return false;
+    return false
   }
-  if(whitePageName.indexOf(to.name) == -1  && !store.isSelectIdentity) {
-    next({path: '/identity', query: { backPath: encodeURIComponent(to.fullPath) }})
-    if(from.name !== 'Index' && from.name !== 'Mine') {
+  if (whitePageName.indexOf(to.name) == -1 && !store.isSelectIdentity) {
+    next({ path: '/identity', query: { backPath: encodeURIComponent(to.fullPath) } })
+    if (from.name !== 'Index' && from.name !== 'Mine') {
       return { name: 'Index' }
     }
-    return false;
+    return false
   }
-  if(store.source && !to.query.source) {
+  if (store.source && !to.query.source) {
     to.query.source = store.source
-    next(to);
+    next(to)
   } else {
     next()
   }

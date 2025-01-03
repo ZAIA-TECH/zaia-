@@ -6,7 +6,7 @@ export default {
   orderContentEcho: '/order/content/echo', // 内容回显
   orderImageParsing: '/order/image/parsing', // 图片解析
 
-  orderCreate: '/order/create', // 保存订单  
+  orderCreate: '/order/create', // 保存订单
   orderPay: '/order/pay', // 订单支付
 
   productFindWallet: '/product/find/wallet', // 我的钱包页面
@@ -33,7 +33,7 @@ export default {
   updateIdentities: '/user/update/identities', // 修改用户身份信息
 
   saveChatMessage: '/order/save/chat/message', // 保存聊天记录
-  requestUrl: '/order/request/url',  // 获取用户提问签名路径
+  requestUrl: '/order/request/url', // 获取用户提问签名路径
   getChatMessage: '/order/get/chat/message', // 获取聊天记录
   chatEvaluation: '/order/change/evaluation', // 评价
 
@@ -64,11 +64,38 @@ export default {
   updateTitle: 'order/update/title', // 编辑标题
   updateReporting: '/order/update/reporting', // 编辑报告
   reportingOverride: '/order/reporting/override', // 精批报告重写
-  exportWordReport: '/order/export/word', //导出报告
 
   touchMessage: '/order/touch/message', // 全文润色
 
   agentPreviews: '/agent/previews', // 预览接口
   agentUseShardingCode: 'agent/use/sharding/code', // 使用分享吗接口
+
+  exportWordReport: '/order/export/word', //导出报告
+
+  classAdd: '/class/add', // 新增班级
+  classDel: '/class/del', // 删除班级
+  classFind: '/class/find', // 查询所属用户班级
+  classUpdate: '/class/update', // 修改班级信息
+
+  studentAdd: '/class/student/add', // 班级内添加学生
+  studentDel: '/class/student/del', // 删除学生
+  studentUpdate: '/class/student/update', // 修改学生信息
+
+  classSelect: '/class/select', // 查询班级信息（包含学生）
+
+  taskAdd: '/task/add', // 添加作业
+  taskUpdateName: '/task/update/name', // 修改作业名称
+  taskDel: '/task/del', // 删除作业
+  taskFind: '/task/find', // 查询班级作业信息-班级作业页
+  taskDetail: '/task/find/detail', // 查询班级作业信息-具体作业页
+  taskUpload: '/task/upload', // 上传作业
+
+  taskDelStu: '/task/del/stu', // 删除学生作业
+
+  taskImageParsing: '/order/image/parsing/v2', // 班级批改图片解析
+
+  taskExportWord: '/task/export/word', // 批量导出
+
+  taskGetAnswer: '/task/getAnswer' // 批改详情
 
 }

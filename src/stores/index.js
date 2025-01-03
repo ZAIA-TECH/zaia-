@@ -5,16 +5,16 @@ import { getQuery, getBrowser } from '@/utils/utils'
 
 export const useStore = defineStore('index', {
   state: () => {
-    const showLogin = ref(false);
+    const showLogin = ref(false)
     const userId = Cookies.get('userId')
     const isLogin = !!Cookies.get('token')
     // 用户身份
-    let identity = localStorage.getItem('identity');
-    identity = identity ? JSON.parse(identity) : '';
-    const isSelectIdentity = identity && !!identity.userGrade;
+    let identity = localStorage.getItem('identity')
+    identity = identity ? JSON.parse(identity) : ''
+    const isSelectIdentity = identity && !!identity.userGrade
     let loginInfo = localStorage.getItem('loginInfo')
-    loginInfo = loginInfo ? JSON.parse(loginInfo) : {};
-    const query = getQuery(window.location.href);
+    loginInfo = loginInfo ? JSON.parse(loginInfo) : {}
+    const query = getQuery(window.location.href)
 
     return {
       showLogin,
@@ -37,7 +37,7 @@ export const useStore = defineStore('index', {
       hideImagesExample: !!window.localStorage.getItem('hideImagesExample'),
       checkedAgents: reactive([]),
       fileList: [],
-      viewContent: {content: '', title: ''}
+      viewContent: { content: '', title: '' }
     }
   }
 })

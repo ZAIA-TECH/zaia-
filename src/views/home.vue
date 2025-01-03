@@ -24,11 +24,11 @@ const keepAliveInclude = ref([])
 const store = useStore()
 
 onBeforeRouteUpdate((to) => {
-  if (['FeedBackList', 'SelectFiles', 'CustomFeedBack'].indexOf(to.name) == -1) {
+  if (['FeedBackList', 'SelectFiles', 'CustomFeedBack', 'classCorrect'].indexOf(to.name) == -1) {
     keepAliveInclude.value = []
     store.checkedAgents = []
   } else {
-    keepAliveInclude.value = ['SelectFiles']
+    keepAliveInclude.value = ['SelectFiles', 'classCorrect']
   }
 })
 
