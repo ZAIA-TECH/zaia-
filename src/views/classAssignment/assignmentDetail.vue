@@ -20,21 +20,40 @@
         >
       </div>
       <div class="stu_list">
-        <div
-          v-for="item in students"
-          :key="`${item.stuId}_${item.taskStatus}`"
-          :class="['stu_item', `task_status_${item.taskStatus}`]"
-          @click="stuUploadTask(item)"
-          @touchstart="stuTouchStart($event, item)"
-          @touchend="stuTouchEnd"
-        >
-          <div class="item_stu_name">{{ item.stuName }}</div>
-          <div class="item_status">{{ taskStatus[item.taskStatus] }}</div>
+        <template v-if="isPc">
           <div
-            :class="['item_dot', exportList.includes(item.stuId) ? 'item_checked' : '']"
-            @touchstart.stop="exportSelect(item)"
-          ></div>
-        </div>
+            v-for="item in students"
+            :key="`${item.stuId}_${item.taskStatus}`"
+            :class="['stu_item', `task_status_${item.taskStatus}`]"
+            @click="stuUploadTask(item)"
+            @mousedown="stuTouchStart($event, item)"
+            @mouseup="stuTouchEnd"
+          >
+            <div class="item_stu_name">{{ item.stuName }}</div>
+            <div class="item_status">{{ taskStatus[item.taskStatus] }}</div>
+            <div
+              :class="['item_dot', exportList.includes(item.stuId) ? 'item_checked' : '']"
+              @mousedown.stop="exportSelect(item)"
+            ></div>
+          </div>
+        </template>
+        <template v-else>
+          <div
+            v-for="item in students"
+            :key="`${item.stuId}_${item.taskStatus}`"
+            :class="['stu_item', `task_status_${item.taskStatus}`]"
+            @click="stuUploadTask(item)"
+            @touchstart="stuTouchStart($event, item)"
+            @touchend="stuTouchEnd"
+          >
+            <div class="item_stu_name">{{ item.stuName }}</div>
+            <div class="item_status">{{ taskStatus[item.taskStatus] }}</div>
+            <div
+              :class="['item_dot', exportList.includes(item.stuId) ? 'item_checked' : '']"
+              @touchstart.stop="exportSelect(item)"
+            ></div>
+          </div>
+        </template>
       </div>
     </div>
     <div class="ex_tips">拍照方式严重影响报告质量，点此 <span @click="toggleExample">查看示例</span></div>
@@ -168,12 +187,14 @@ import { useRoute, useRouter } from 'vue-router'
 import Pupop from '../../components/pupop.vue'
 import { showToast, showLoadingToast } from 'vant'
 import { dataToFile, compressImage } from '../../utils/compressImage'
-import { replacePunctuationWithChinese, fitUnitPx, copy } from '@/utils/utils'
+import { replacePunctuationWithChinese, fitUnitPx, copy, isPC } from '@/utils/utils'
 import Cropper from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
 
 const route = useRoute()
 const router = useRouter()
+
+const isPc = isPC()
 
 const taskStatus = {
   0: '待上传',
