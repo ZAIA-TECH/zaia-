@@ -58,7 +58,7 @@
     </div>
     <div class="ex_tips">拍照方式严重影响报告质量，点此 <span @click="toggleExample">查看示例</span></div>
 
-    <Pupop v-model:show="showUpload" title="上传作文">
+    <Pupop v-model:show="showUpload" title="上传作文" :close-on-click-overlay="false">
       <div class="pop_container">
         <div class="upload_b" v-if="isFile">
           <div class="upload_in">
@@ -268,7 +268,10 @@ const afterRead = async (file, props) => {
       forbidClick: true,
       duration: 0
     })
-    await compressImage(fileList.value[currIndex].file, 1000, 1000, 1)
+    const compressFile = await compressImage(fileList.value[currIndex].file, 1000, 1000, 1)
+    fileList.value[currIndex].file = compressFile.file
+    fileList.value[currIndex].content = compressFile.content
+    fileList.value[currIndex].objectUrl = compressFile.objectUrl
     toast.close()
   }
   currFile = fileList.value[currIndex].file
@@ -393,20 +396,21 @@ const stuTouchStart = (event, item) => {
   timer = setTimeout(() => {
     showDelete.value = true
     timer = null
-    deleteItem = ''
   }, 500)
   event.preventDefault()
 }
 const stuTouchEnd = () => {
-  if (timer && deleteItem) {
+  if (timer) {
     router.push({ path: '/taskDetail', query: { id: deleteItem.id } })
   }
   clearTimeout(timer)
+  timer = null
 }
 
 const deleteConfirm = async () => {
   const res = await taskDelStu({ id: deleteItem.id })
   showToast('删除成功')
+  deleteItem = ''
   showDelete.value = false
   getList()
 }
@@ -460,6 +464,7 @@ const copyUrl = (event) => {
   padding: 14px 16px;
   padding-bottom: calc(14px + constant(safe-area-inset-bottom));
   padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  position: relative;
   .assign_explain {
     padding: 12px 14px;
     border: 1px solid #8fdbcc;
@@ -614,12 +619,12 @@ const copyUrl = (event) => {
   .cropper_cover {
     padding: 20px 20px 50px;
     background: #d2f0ea url('@img/file_bg@2x.png') no-repeat 0 0 / 375px auto;
-    position: absolute;
+    position: fixed;
     z-index: 99999;
     top: 0;
-    left: 0;
+    left: calc(50% - 187.5px);
     height: 100vh;
-    width: 100vw;
+    width: 375px;
     // right: 0;
     // bottom: 0;
     .cro_title {
