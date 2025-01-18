@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ minHeight: `${innerHeight}px` }" class="home" v-if="!isCrash">
+  <div :style="{ minHeight: `${innerHeight}px` }" class="home">
     <router-view v-slot="{ Component }" v-if="!isLoading">
       <transition name="fade" mode="out-in">
         <keep-alive :include="keepAliveInclude" :max="2">
