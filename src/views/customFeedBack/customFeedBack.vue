@@ -44,7 +44,7 @@
             :max-count="20"
             :max-size="102400"
             upload-icon="plus"
-            accept="application/pdf, .docx, .txt"
+            accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, text/plain"
             label="点击上传文件"
         />
       </div>
@@ -93,7 +93,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { showToast } from 'vant';
-import { uploadFile, createKnowledgeBase } from '@/api';  // Import API functions
+import {uploadFile, createKnowledgeBase, agentAdd, agentUpdate} from '@/api';  // Import API functions
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
@@ -226,11 +226,38 @@ const publishFeed = () => {
   showAuthSet.value = true;
 };
 
+const authList = ref([
+  { icon: 'lock', name: '私密 · 仅自己可用', auth: '1' },
+  { icon: 'contact', name: '分享 · 通过使用码的用户可共享', auth: '2' },
+  { icon: 'eye', name: '公开 · 发表在反馈大厅', auth: '0' },
+])
+const toggleAuth = (item) => {
+  if(item.auth == agentState.value) return;
+  agentState.value = item.auth;
+}
+const preview = '##作文背景信息##：{\n1、作文标题：【$$title$$】\n2、作文文体：【$$dicDetailValue$$】\n3、写作要求：【$$写作要求$$】\n4、适用年级：【$$userGrade$$】\n5、需要输出的反馈及介绍：【$$agentName$$：$$agentIntro$$】\n}\n##格式参考示例##：{\n$$agentExampleList$$\n}\n##任务##：{\n}\n##输出要求{\n$$agentDemand$$\n注意：输出格式必须严格遵守‘格式参考示例’\n}'
+const agentId = route.query.agentId;
 // Handle permission settings and publish
 const surePush = async () => {
-  // Implement publish logic here
-  showToast('发布成功');
-};
+  await (!agentId ? agentAdd : agentUpdate)({
+    agentName: agentName.value,
+    agentIntro: agentIntro.value,
+    agentDemand: agentDemand.value,
+    agentExampleList: agentExampleList.value,
+    agentInput: '##作文背景信息##：{\n1、作文标题：【$$title$$】2、作文文体：【$$作文文体$$】\n3、写作要求：【$$写作要求$$】\n4、适用年级：【$$适用年级$$】\n5、需要输出的反馈及介绍：【$$反馈名称$$：$$简介$$】\n}\n##格式参考示例##：{\n$$输出示例$$\n}\n##任务##：{\n}\n##输出要求{\n$$输出要求$$\n注意：输出格式必须严格遵守‘格式参考示例’\n}',
+    agentState: agentState.value,
+    agentId,
+    language: route.query.type
+  })
+  showToast({
+    message: agentId ? '修改成功' : '添加成功',
+    forbidClick: true,
+    onClose: () => {
+      history.go(-1);
+    },
+    duration: 1500
+  })
+}
 
 </script>
 
