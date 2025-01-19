@@ -96,11 +96,13 @@ export default {
 
   taskExportWord: '/task/export/word', // 批量导出
 
+
   taskGetAnswer: '/task/getAnswer', // 批改详情
 
   uploadFile: '/knowledgeBase/upload', // 上传文件
 
-  createKnowledgeBase: '/knowledgeBase/create'
+  createKnowledgeBase: '/knowledgeBase/create' //创建知识库
 
 
 }
+

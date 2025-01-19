@@ -186,7 +186,11 @@ import { taskDetail, taskUpload, taskDelStu, taskImageParsing, taskExportWord } 
 import { useRoute, useRouter } from 'vue-router'
 import Pupop from '../../components/pupop.vue'
 import { showToast, showLoadingToast } from 'vant'
+<<<<<<< HEAD
 import { dataToFile, compressImage } from '@/utils/compressImage'
+=======
+import { dataToFile, compressImage } from '../../utils/compressImage'
+>>>>>>> 43159515d1f2eb79c99faf0fa60135e3b1f66445
 import { replacePunctuationWithChinese, fitUnitPx, copy, isPC } from '@/utils/utils'
 import Cropper from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
