@@ -1,0 +1,90 @@
+@import './var.scss';
+
+// 弹性盒子上下左右居中
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-both-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+@mixin position-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin position-hor-center {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+@mixin hor-center($width) {
+  width: $width;
+  margin: 0 auto;
+  display: block;
+}
+
+@mixin ver-center($verp, $horp) {
+  line-height: 1em;
+  padding: $verp $horp;
+}
+
+@mixin primaryBtn($w) {
+  width: $w;
+  padding: 9px 0;
+  line-height: 1;
+  @include flex-center;
+  background: $primaryColor;
+  color: #fff;
+  font-size: 14px;
+  border-radius: $primaryRadius;
+  font-weight: 700;
+  box-shadow: 0 0 1px $primaryColor;
+  cursor: pointer;
+}
+
+@mixin primaryThinBtn($w) {
+  @include primaryBtn($w);
+  background: $primaryColorThin9;
+  border: 1px solid $primaryColor;
+  box-shadow: 0 0 1px $primaryColor;
+}
+
+@mixin primaryBtnDisable($w) {
+  @include primaryBtn($w);
+  background: $disableColorThin3;
+  color: $disableColorThin9;
+  box-shadow: 0 0 1px $disableColorThin3;
+}
+
+.van-button--comfirm {
+  border: none;
+  background: linear-gradient(to bottom, #72e7d2 0%, #4cb19e 100%);
+  color: #fff;
+  height: 36px;
+  width: 100%;
+  &:before {
+    display: none;
+  }
+}
