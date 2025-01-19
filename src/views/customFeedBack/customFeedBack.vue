@@ -32,12 +32,13 @@
     <!-- Knowledge Base Section -->
     <div class="form_item">
       <div class="lable require">知识库</div>
-      <div class="knowledge-upload-section">
+      <div class="knowledge-upload-section" @click="validUpload">
         <div class="upload-container">
           <van-icon name="folder" class="upload-icon" />
           <span class="upload-text">支持 word, pdf, txt 格式，单个文件最大 100MB，最多上传 20 个文件</span>
         </div>
         <van-uploader
+            :readonly="uploaderDisabled"
             v-model="knowledgeBaseFiles"
             :after-read="handleFileUpload"
             :max-count="20"
@@ -90,9 +91,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { showToast } from 'vant';
 import { uploadFile, createKnowledgeBase } from '@/api';  // Import API functions
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
 
 const crossSize = 20;  // 控制关闭图标的大小
 
@@ -102,6 +106,8 @@ const agentIntro = ref('');
 const agentDemand = ref('');
 const agentExampleList = ref('');
 const agentState = ref(0);
+
+const uploaderDisabled = computed(() => !(agentName.value && agentIntro.value && agentDemand.value))
 
 // File upload
 const knowledgeBaseFiles = ref([]);
@@ -128,13 +134,33 @@ const fieldsValid = () => {
   return true;
 };
 
+const validUpload = () => {
+  if(!uploaderDisabled.value) return 
+  if (!agentName.value) {
+    showToast('请填写反馈名称');
+    return false;
+  }
+  if (!agentIntro.value) {
+    showToast('请填写简介');
+    return false;
+  }
+  if (!agentDemand.value) {
+    showToast('请填写输出要求');
+    return false;
+  }
+}
+
 // Handle file upload after the file is selected
 const handleFileUpload = async (file) => {
   console.log('文件选择:', file);  // 打印文件信息
   try {
     const formData = new FormData();
-    console.log(file);  // 打印完整的 file 结构，检查是否有正确的 `file.file`
     formData.append('file', file.file);  // 确保上传的是 file.file 而不是整个 file 对象
+    formData.append('name', agentName.value);
+    formData.append('description', agentIntro.value);
+    formData.append('agentDemand', agentDemand.value);
+    formData.append('agentDemand', agentDemand.value);
+    route.query.agentId && formData.append('agentId', route.query.agentId);
 
     const res = await uploadFile(formData);
 
